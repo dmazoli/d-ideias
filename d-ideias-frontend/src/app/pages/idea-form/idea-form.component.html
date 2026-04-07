@@ -1,0 +1,111 @@
+<main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-8 lg:px-10">
+  <section
+    class="rounded-[32px] border border-white/10 bg-white/5 px-6 py-6 shadow-2xl shadow-slate-950/30 backdrop-blur xl:px-8"
+  >
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <div class="space-y-3">
+        <a
+          routerLink="/"
+          class="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.32em] text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200"
+        >
+          Voltar para listagem
+        </a>
+        <div>
+          <h1 class="text-4xl font-semibold tracking-tight text-white">{{ pageTitle() }}</h1>
+          <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+            {{
+              isEditMode()
+                ? 'Revise os dados mockados da ideia selecionada.'
+                : 'Preencha os campos para simular o
+            cadastro de uma nova ideia.'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="rounded-3xl border border-white/10 bg-slate-900/70 px-5 py-4 text-sm text-slate-300"
+      >
+        <div class="text-xs uppercase tracking-[0.28em] text-slate-500">Modo</div>
+        <div class="mt-2 text-lg font-semibold text-white">
+          {{ isEditMode() ? 'Edicao' : 'Criacao' }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="handleSubmit()"
+    class="grid gap-6 rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-slate-950/20 backdrop-blur"
+  >
+    <div class="grid gap-6 md:grid-cols-2">
+      <label class="space-y-2 text-sm text-slate-300">
+        <span class="text-xs uppercase tracking-[0.28em] text-slate-500">Matricula</span>
+        <input
+          type="number"
+          formControlName="authorRegister"
+          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        />
+      </label>
+
+      <label class="space-y-2 text-sm text-slate-300 md:col-span-2">
+        <span class="text-xs uppercase tracking-[0.28em] text-slate-500">Titulo da ideia</span>
+        <input
+          type="text"
+          formControlName="improvementSuggestion"
+          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        />
+      </label>
+
+      <label class="space-y-2 text-sm text-slate-300 md:col-span-2">
+        <span class="text-xs uppercase tracking-[0.28em] text-slate-500">Processo atual</span>
+        <textarea
+          rows="4"
+          formControlName="currentProcess"
+          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        ></textarea>
+      </label>
+
+      <label class="space-y-2 text-sm text-slate-300 md:col-span-2">
+        <span class="text-xs uppercase tracking-[0.28em] text-slate-500">Como implementar</span>
+        <textarea
+          rows="4"
+          formControlName="howToImplement"
+          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        ></textarea>
+      </label>
+
+      <label class="space-y-2 text-sm text-slate-300 md:col-span-2">
+        <span class="text-xs uppercase tracking-[0.28em] text-slate-500">Beneficios esperados</span>
+        <textarea
+          rows="4"
+          formControlName="expectedBenefits"
+          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        ></textarea>
+      </label>
+    </div>
+
+    <div
+      class="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="text-sm text-slate-400">
+        Fluxo mockado. O formulario muda entre criacao e edicao pela presenca do id na rota.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          routerLink="/"
+          class="rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200"
+        >
+          Cancelar
+        </a>
+        <button
+          type="submit"
+          class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+        >
+          {{ submitLabel() }}
+        </button>
+      </div>
+    </div>
+  </form>
+</main>

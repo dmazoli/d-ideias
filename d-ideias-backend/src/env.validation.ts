@@ -10,6 +10,7 @@ export const envSchema = z.object({
   POSTGRES_DB: z.string().default('d_ideias'),
   POSTGRES_USER: z.string().default('postgres'),
   POSTGRES_PASSWORD: z.string().default('postgres'),
+  ALLOWED_ORIGINS: z.string().default('*'),
 });
 
 export type Env = z.infer<typeof envSchema>;
