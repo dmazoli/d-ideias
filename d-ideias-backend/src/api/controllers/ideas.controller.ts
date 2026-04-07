@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -18,6 +19,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import type { Idea } from '../../domain/entities';
@@ -93,12 +95,29 @@ export class IdeasController {
 
   @Get()
   @ApiOperation({ summary: 'Listar todas as ideias' })
+  @ApiQuery({
+    name: 'page',
+    type: 'number',
+    description: 'Número da página (padrão: 1)',
+    required: false,
+    nullable: true,
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    type: 'number',
+    description: 'Número de itens por página (padrão: 10)',
+    required: false,
+    nullable: true,
+  })
   @ApiOkResponse({
     description: 'Lista de ideias',
     isArray: true,
   })
-  public async list(): Promise<Idea[]> {
-    return this.listIdeasUseCase.execute();
+  public async list(
+    @Query('page') page?: number,
+    @Query('pageSize') pageSize?: number,
+  ): Promise<PaginatedResponse<Idea>> {
+    return this.listIdeasUseCase.execute(page, pageSize);
   }
 
   @Get(':id')

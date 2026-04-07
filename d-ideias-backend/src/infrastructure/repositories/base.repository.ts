@@ -20,8 +20,12 @@ export class BaseRepository<
     });
   }
 
-  async findAll(): Promise<T[]> {
-    return this.repository.find();
+  async findAll(page: number, pageSize: number): Promise<T[]> {
+    const skip = (page - 1) * pageSize;
+    return this.repository.find({
+      skip,
+      take: pageSize,
+    });
   }
 
   async update(id: TId, entity: Partial<T>): Promise<T | null> {
@@ -45,5 +49,9 @@ export class BaseRepository<
     } as FindOptionsWhere<T>);
 
     return (result.affected ?? 0) > 0;
+  }
+
+  async count(): Promise<number> {
+    return this.repository.count();
   }
 }

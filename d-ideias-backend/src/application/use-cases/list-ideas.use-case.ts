@@ -9,7 +9,26 @@ export class ListIdeasUseCase {
     private readonly ideaRepository: IIdeaRepository,
   ) {}
 
-  public async execute(): Promise<Idea[]> {
-    return this.ideaRepository.findAll();
+  public async execute(
+    page: number = 1,
+    pageSize: number = 10,
+  ): Promise<PaginatedResponse<Idea>> {
+    page = Math.max(page, 1);
+    pageSize = Math.max(pageSize, 1);
+
+    const promises = [
+      this.ideaRepository.findAll(page, pageSize),
+      this.ideaRepository.count(),
+    ];
+    const [data, count] = await Promise.all(promises);
+
+    return {
+      data,
+      meta: {
+        count,
+        page,
+        pageSize,
+      },
+    } as PaginatedResponse<Idea>;
   }
 }
