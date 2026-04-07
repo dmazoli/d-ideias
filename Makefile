@@ -2,11 +2,11 @@
 
 help:
 	@echo "Available commands:"
-	@echo "  configure - Set up the project by installing dependencies and copying configuration files."
-	@echo "  run       - Build and run the project using Docker Compose."
-	@echo "  format    - Format backend and frontend code."
-	@echo "  test-backend      - Run backend unit and e2e tests."
-	@echo "  test-frontend     - Run frontend tests."
+	@echo "  configure 		- Set up the project by installing dependencies and copying configuration files."
+	@echo "  run       		- Build and run the project using Docker Compose."
+	@echo "  format    		- Format backend and frontend code."
+	@echo "  test-backend		- Run backend unit and e2e tests."
+	@echo "  test-frontend		- Run frontend tests."
 	@echo "  migration-generate NAME=<name> - Generate backend migration file."
 
 configure:
@@ -19,7 +19,7 @@ configure:
 
 run:
 	@echo "Running the project..."
-	@docker-compose up --build
+	@docker compose up
 
 format:
 	@echo "Formatting code..."

@@ -1,96 +1,130 @@
+<p align="center">
+    <img src="d-ideias-frontend/public/logo.png" alt="D+Ideias logo" width="220" />
+</p>
+
 # D+Ideias
 
-MVP do programa D+Ideias, proposto para informatizar o processo de cadastro e acompanhamento de ideias de melhoria registradas por colaboradores.
+Aplicação web para cadastro e acompanhamento de ideias de melhoria.
 
-O projeto foi estruturado como um monorepo com frontend e backend separados, seguindo o escopo descrito na avaliação técnica.
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![TypeORM](https://img.shields.io/badge/TypeORM-0.3-FE0803?logo=typeorm&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?logo=vitest&logoColor=white)
 
-## Objetivo do MVP
+## Stack
 
-Substituir o controle manual em planilha por um sistema web capaz de registrar, listar, consultar, atualizar e remover ideias, mantendo as regras principais do processo atual.
+- Frontend: Angular 21, TypeScript, Tailwind CSS, Font Awesome, Vitest
+- Backend: NestJS 11, TypeScript, TypeORM, Zod
+- Banco de dados: PostgreSQL
+- Infraestrutura local: Docker Compose
 
-O MVP não contempla autenticação ou autorização. O foco é sistematizar o fluxo hoje executado manualmente pelo setor responsável.
+## Arquitetura do monorepo
 
-## Funcionalidades previstas
+O projeto está organizado em monorepo com:
 
-- Listagem de ideias cadastradas
-- Visualização dos detalhes de uma ideia
-- Cadastro de nova ideia
-- Atualização dos campos editáveis de uma ideia
-- Remoção de ideia cadastrada incorretamente
+- backend em NestJS + TypeScript
+- frontend em Angular 21 + TypeScript
+- banco PostgreSQL via Docker Compose
 
-## Dados da ideia
+## Funcionalidades implementadas
 
-Cada ideia deverá possuir, no mínimo, os seguintes campos:
+- CRUD completo de ideias
+- listagem paginada
+- ordenação por:
+    - mais recentes
+    - ID
+    - data de criação
+    - data de atualização
+    - votos positivos
+    - dislikes
+- votação por ideia (upvote e downvote)
+- alertas globais no frontend (sucesso e erro)
+- modal de confirmação para exclusão
 
-- Identificador único e sequencial
-- RE do autor
-- O que pode ser melhorado
-- Como é feito hoje
-- Como pode ser melhorado
-- Qual é o benefício
-- Data de registro da ideia
+## Modelo de dados da ideia
 
-## Arquitetura proposta
+Cada ideia possui:
 
-O projeto segue a arquitetura mínima pedida no enunciado:
-
-- Backend em Node.js com NestJS
-- Frontend SPA em Angular
-- Banco de dados relacional
+- id
+- authorRegister (RE)
+- improvementSuggestion
+- currentProcess
+- howToImplement
+- expectedBenefits
+- upvotes
+- downvotes
+- createdAt
+- updatedAt
 
 ## Estrutura do repositório
 
 ```text
 .
 ├── d-ideias-backend/
-│   └── API REST em NestJS
-└── d-ideias-frontend/
-    └── SPA em Angular
+├── d-ideias-frontend/
+├── docker-compose.yaml
+└── Makefile
 ```
 
-### Backend
+## Como executar
 
-- Stack base: NestJS + TypeScript
-- Objetivo: expor endpoints REST para o domínio de ideias
-- Estado atual: projeto base criado, sem regras de negócio implementadas
-
-### Frontend
-
-- Stack base: Angular 21 + TypeScript
-- Objetivo: consumir a API e disponibilizar as telas do MVP
-- Estado atual: projeto base criado, sem páginas de negócio implementadas
-
-## Estado atual
-
-O repositório ainda está em fase inicial. Até o momento existem apenas os esqueletos das aplicações frontend e backend.
-
-Itens ainda previstos para implementação:
-
-- Modelagem do banco relacional
-- Script SQL de criação do banco
-- CRUD de ideias no backend
-- Integração do frontend com a API
-- Telas de listagem, detalhe, cadastro, edição e exclusão
-- Orquestração dos serviços com Docker Compose
-
-## Execução do projeto
-
+### 1. Configurar dependências e arquivos locais
 
 ```bash
-docker compose up --build
+make configure
 ```
 
-## Entregáveis esperados
+### 2. Subir ambiente completo (db + api + frontend)
 
-Com a conclusão do projeto, os seguintes itens devem estar disponíveis:
+```bash
+make run
+```
 
-- [X] SQL de criação do banco de dados ([migration](d-ideias-backend/src/infrastructure/migrations/1775591246843-Initial.ts))
-- [X] Código-fonte do backend
-- [X] Código-fonte do frontend
-- [X] Instruções de execução do ambiente
+Endpoints padrão:
 
-## Observações
+- Frontend: http://localhost:4200
+- API: http://localhost:3000
 
-- O escopo atual cobre apenas o primeiro MVP
-- O cadastro direto da ideia pelo próprio colaborador foi citado como evolução futura e não faz parte desta entrega
-- A documentação deverá evoluir junto com a implementação das features e da infraestrutura
+## Comandos úteis
+
+```bash
+make format
+make test-backend
+make test-frontend
+make migration-generate NAME=NomeDaMigration
+```
+
+## Migrations
+
+Migrations principais já existentes:
+
+- criação da tabela de ideias
+- seed inicial com dados
+- inclusão de colunas `upvotes` e `downvotes` com restrição de não-negativo
+
+## API (resumo)
+
+- `GET    /swagger` (documentação interativa)
+- `GET    /ideas?page=1&pageSize=9&sortBy=recent`
+- `GET    /ideas/:id`
+- `POST   /ideas`
+- `PATCH  /ideas/:id`
+- `DELETE /ideas/:id`
+- `PATCH  /ideas/:id/upvote`
+- `PATCH  /ideas/:id/downvote`
+
+## Testes
+
+- backend: unitários + e2e
+- frontend: unitários
+
+Executar:
+
+```bash
+make test-backend
+make test-frontend
+```

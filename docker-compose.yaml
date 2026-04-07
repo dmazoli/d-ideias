@@ -1,6 +1,6 @@
 volumes:
   db_data:
-  
+
 
 networks:
   d-ideias-network:
@@ -18,7 +18,10 @@ services:
     env_file:
       - .env
     networks:
-      - d-ideias-network
+      d-ideias-network:
+        aliases:
+          - db
+          - d-ideias-db
     volumes:
       - db_data:/var/lib/postgresql
     healthcheck:
@@ -35,24 +38,23 @@ services:
       context: ./d-ideias-backend
       dockerfile: Dockerfile
     container_name: d-ideias-api
-    command: sh -c "npm run migration:run && npm run start:dev"
+    command: >
+      sh -c " until node -e \"require('dns').lookup('db', (error) => process.exit(error ? 1 : 0))\"; do
+        echo 'Aguardando resolução DNS do serviço db...';
+        sleep 1;
+      done; npm run migration:run && npm run start:dev "
     env_file:
       - .env
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://localhost:3000/ideas').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
-        ]
+      test: [ "CMD", "node", "-e", "fetch('http://localhost:3000/ideas').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))" ]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 20s
+    restart: on-failure
     networks:
       - d-ideias-network
     ports:
