@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IdeaSchema } from '../entities';
+import { Idea } from '../../domain/entities';
 import { IdeaRepository } from './idea.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([IdeaSchema])],
+  imports: [TypeOrmModule.forFeature([Idea])],
   providers: [
     IdeaRepository,
     {

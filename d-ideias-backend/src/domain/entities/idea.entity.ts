@@ -1,17 +1,34 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity('ideas')
 export class Idea {
+  @PrimaryGeneratedColumn('increment')
   id?: number;
 
-  authorRegister: number;
+  @Column('smallint')
+  authorRegister!: number;
 
-  improvementSuggestion: string;
+  @Column('text')
+  improvementSuggestion!: string;
 
-  currentProcess: string;
+  @Column('text')
+  currentProcess!: string;
 
-  howToImplement: string;
+  @Column('text')
+  howToImplement!: string;
 
-  expectedBenefits: string;
+  @Column('text')
+  expectedBenefits!: string;
 
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

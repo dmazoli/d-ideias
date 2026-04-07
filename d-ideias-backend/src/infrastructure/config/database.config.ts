@@ -1,7 +1,13 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Env } from '../../env.validation';
+import { Idea } from '../../domain/entities';
 
 export function getDatabaseConfig(env: Env): TypeOrmModuleOptions {
+  const isProduction = env.NODE_ENV === 'production';
+  const migrationsPattern = isProduction
+    ? 'dist/infrastructure/migrations/*.js'
+    : undefined;
+
   return {
     type: 'postgres',
     host: env.POSTGRES_HOST,
@@ -9,9 +15,9 @@ export function getDatabaseConfig(env: Env): TypeOrmModuleOptions {
     username: env.POSTGRES_USER,
     password: env.POSTGRES_PASSWORD,
     database: env.POSTGRES_DB,
-    entities: ['src/**/*.entity.ts', 'src/**/*.schema.ts'],
-    migrations: ['src/infrastructure/migrations/*.ts'],
-    synchronize: env.NODE_ENV === 'development',
+    entities: [Idea],
+    migrations: migrationsPattern ? [migrationsPattern] : [],
+    synchronize: false,
     logging: env.NODE_ENV === 'development',
   };
 }
