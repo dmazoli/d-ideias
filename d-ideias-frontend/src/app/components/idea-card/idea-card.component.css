@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+:host-context(.sort-dropdown-open) .tooltip-trigger {
+  position: static;
+}
+
 .tooltip-content {
   position: absolute;
   top: calc(100% + 0.5rem);

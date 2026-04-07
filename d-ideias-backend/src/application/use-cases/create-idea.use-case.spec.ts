@@ -13,8 +13,12 @@ describe('CreateIdeaUseCase', () => {
       save: jest.fn(),
       findById: jest.fn(),
       findAll: jest.fn(),
+      findAllWithSort: jest.fn(),
+      count: jest.fn(),
       update: jest.fn(),
       deleteById: jest.fn(),
+      incrementUpvotes: jest.fn(),
+      incrementDownvotes: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +47,8 @@ describe('CreateIdeaUseCase', () => {
       const savedIdea: Idea = {
         id: 1,
         ...input,
+        upvotes: 0,
+        downvotes: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

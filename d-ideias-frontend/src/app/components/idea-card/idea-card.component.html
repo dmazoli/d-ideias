@@ -62,7 +62,7 @@
     </div>
     <div class="rounded-2xl bg-white/5 p-3">
       <dt class="flex items-center gap-2 text-slate-500">
-        <span>Data de registro da ideia</span>
+        <span>Data de criação</span>
         <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
           <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
           <span class="tooltip-content">Data em que foi preenchida a ideia.</span>
@@ -97,11 +97,27 @@
   <div
     class="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-sm text-slate-400"
   >
-    <span
-      >{{ isUpdated() ? 'Atualizada em' : 'Criada em' }}
-      {{ idea().updatedAt | date: 'dd/MM/yyyy' }}</span
-    >
-    <span class="text-cyan-200">ID {{ idea().id }}</span>
+    <span>
+      {{ isUpdated() ? 'Atualizada em' : 'Criada em' }}
+      {{ idea().updatedAt | date: 'dd/MM/yyyy' }}
+    </span>
+    <div class="flex items-center gap-3">
+      <button
+        (click)="upvoteIdea()"
+        class="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 px-3 py-1 text-emerald-200 transition hover:border-emerald-300/70 hover:bg-emerald-500/10"
+      >
+        <fa-icon [icon]="faThumbsUp"></fa-icon>
+        <span>{{ idea().upvotes }}</span>
+      </button>
+      <button
+        (click)="downvoteIdea()"
+        class="inline-flex items-center gap-1 rounded-full border border-rose-400/30 px-3 py-1 text-rose-200 transition hover:border-rose-300/70 hover:bg-rose-500/10"
+      >
+        <fa-icon [icon]="faThumbsDown"></fa-icon>
+        <span>{{ idea().downvotes }}</span>
+      </button>
+      <span class="text-cyan-200">ID {{ idea().id }}</span>
+    </div>
   </div>
 </article>
 

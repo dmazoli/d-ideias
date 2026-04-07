@@ -12,8 +12,12 @@ describe('ListIdeasUseCase', () => {
       save: jest.fn(),
       findById: jest.fn(),
       findAll: jest.fn(),
+      findAllWithSort: jest.fn(),
+      count: jest.fn(),
       update: jest.fn(),
       deleteById: jest.fn(),
+      incrementUpvotes: jest.fn(),
+      incrementDownvotes: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -30,7 +34,7 @@ describe('ListIdeasUseCase', () => {
   });
 
   describe('execute', () => {
-    it('should return all ideas', async () => {
+    it('should return paginated ideas ordered by recent by default', async () => {
       const ideas: Idea[] = [
         {
           id: 1,
@@ -39,6 +43,8 @@ describe('ListIdeasUseCase', () => {
           currentProcess: 'Manual steps',
           howToImplement: 'Automation',
           expectedBenefits: 'Faster delivery',
+          upvotes: 10,
+          downvotes: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -49,28 +55,50 @@ describe('ListIdeasUseCase', () => {
           currentProcess: 'Current flow',
           howToImplement: 'New flow',
           expectedBenefits: 'Better UX',
+          upvotes: 3,
+          downvotes: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
       ];
 
-      repositoryMock.findAll.mockResolvedValue(ideas);
+      repositoryMock.findAllWithSort.mockResolvedValue(ideas);
+      repositoryMock.count.mockResolvedValue(2);
 
       const result = await useCase.execute();
 
-      expect(result).toEqual(ideas);
-      expect(result).toHaveLength(2);
-      expect(repositoryMock.findAll).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({
+        data: ideas,
+        meta: {
+          count: 2,
+          page: 1,
+          pageSize: 10,
+        },
+      });
+      expect(repositoryMock.findAllWithSort.mock.calls).toEqual([
+        [1, 10, 'recent'],
+      ]);
+      expect(repositoryMock.count.mock.calls).toHaveLength(1);
     });
 
-    it('should return empty array when no ideas exist', async () => {
-      repositoryMock.findAll.mockResolvedValue([]);
+    it('should apply explicit sorting and pagination params', async () => {
+      repositoryMock.findAllWithSort.mockResolvedValue([]);
+      repositoryMock.count.mockResolvedValue(0);
 
-      const result = await useCase.execute();
+      const result = await useCase.execute(2, 5, 'votes');
 
-      expect(result).toEqual([]);
-      expect(result).toHaveLength(0);
-      expect(repositoryMock.findAll).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({
+        data: [],
+        meta: {
+          count: 0,
+          page: 2,
+          pageSize: 5,
+        },
+      });
+      expect(repositoryMock.findAllWithSort.mock.calls).toEqual([
+        [2, 5, 'votes'],
+      ]);
+      expect(repositoryMock.count.mock.calls).toHaveLength(1);
     });
   });
 });

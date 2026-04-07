@@ -4,9 +4,11 @@ import request from 'supertest';
 import { IdeasController } from '../src/api/controllers';
 import {
   CreateIdeaUseCase,
+  DownvoteIdeaUseCase,
   DeleteIdeaUseCase,
   GetIdeaByIdUseCase,
   ListIdeasUseCase,
+  UpvoteIdeaUseCase,
   UpdateIdeaUseCase,
 } from '../src/application/use-cases';
 import type { Idea } from '../src/domain/entities';
@@ -19,8 +21,12 @@ describe('Ideas API (integration)', () => {
     save: jest.fn(),
     findById: jest.fn(),
     findAll: jest.fn(),
+    findAllWithSort: jest.fn(),
+    count: jest.fn(),
     update: jest.fn(),
     deleteById: jest.fn(),
+    incrementUpvotes: jest.fn(),
+    incrementDownvotes: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -32,6 +38,8 @@ describe('Ideas API (integration)', () => {
         GetIdeaByIdUseCase,
         UpdateIdeaUseCase,
         DeleteIdeaUseCase,
+        UpvoteIdeaUseCase,
+        DownvoteIdeaUseCase,
         {
           provide: 'IIdeaRepository',
           useValue: ideaRepositoryMock,
@@ -63,6 +71,8 @@ describe('Ideas API (integration)', () => {
       currentProcess: 'Manual onboarding steps',
       howToImplement: 'Automate with forms',
       expectedBenefits: 'Faster setup',
+      upvotes: 0,
+      downvotes: 0,
       createdAt: new Date('2026-04-07T00:00:00.000Z'),
       updatedAt: new Date('2026-04-07T00:00:00.000Z'),
     };
@@ -101,26 +111,47 @@ describe('Ideas API (integration)', () => {
         currentProcess: 'Manual onboarding steps',
         howToImplement: 'Automate with forms',
         expectedBenefits: 'Faster setup',
+        upvotes: 0,
+        downvotes: 0,
         createdAt: new Date('2026-04-07T00:00:00.000Z'),
         updatedAt: new Date('2026-04-07T00:00:00.000Z'),
       },
     ];
 
-    ideaRepositoryMock.findAll.mockResolvedValue(ideas);
+    ideaRepositoryMock.findAllWithSort.mockResolvedValue(ideas);
+    ideaRepositoryMock.count.mockResolvedValue(1);
 
     await request(app.getHttpServer())
       .get('/ideas')
       .expect(200)
-      .expect(({ body }: { body: Idea[] }): void => {
-        expect(body).toHaveLength(1);
-        expect(body[0]?.id).toBe(1);
+      .expect(({ body }: { body: PaginatedResponse<Idea> }): void => {
+        expect(body.data).toHaveLength(1);
+        expect(body.data[0]?.id).toBe(1);
+        expect(body.meta.page).toBe(1);
+        expect(body.meta.pageSize).toBe(10);
+        expect(body.meta.count).toBe(1);
       });
+
+    expect(ideaRepositoryMock.findAllWithSort.mock.calls).toEqual([
+      [1, 10, 'recent'],
+    ]);
+    expect(ideaRepositoryMock.count.mock.calls).toHaveLength(1);
   });
 
-  it('GET /ideas/:id should return 404 when not found', async () => {
-    ideaRepositoryMock.findById.mockResolvedValue(null);
+  it('GET /ideas should apply sortBy query parameter', async () => {
+    ideaRepositoryMock.findAllWithSort.mockResolvedValue([]);
+    ideaRepositoryMock.count.mockResolvedValue(0);
 
-    await request(app.getHttpServer()).get('/ideas/999').expect(404);
+    await request(app.getHttpServer()).get('/ideas?sortBy=votes').expect(200);
+
+    expect(ideaRepositoryMock.findAllWithSort.mock.calls).toEqual([
+      [1, 10, 'votes'],
+    ]);
+    expect(ideaRepositoryMock.count.mock.calls).toHaveLength(1);
+  });
+
+  it('GET /ideas/:id should validate id type', () => {
+    return request(app.getHttpServer()).get('/ideas/not-a-number').expect(400);
   });
 
   it('PATCH /ideas/:id should apply partial update', async () => {
@@ -131,6 +162,8 @@ describe('Ideas API (integration)', () => {
       currentProcess: 'Manual onboarding steps',
       howToImplement: 'Automate with forms',
       expectedBenefits: 'Faster setup',
+      upvotes: 1,
+      downvotes: 0,
       createdAt: new Date('2026-04-07T00:00:00.000Z'),
       updatedAt: new Date('2026-04-07T00:00:01.000Z'),
     };
@@ -147,6 +180,12 @@ describe('Ideas API (integration)', () => {
       });
 
     expect(ideaRepositoryMock.update).toHaveBeenCalledTimes(1);
+  });
+
+  it('GET /ideas/:id should return 404 when not found', async () => {
+    ideaRepositoryMock.findById.mockResolvedValue(null);
+
+    await request(app.getHttpServer()).get('/ideas/999').expect(404);
   });
 
   it('PATCH /ideas/:id should return 400 for empty payload', async () => {
@@ -170,10 +209,8 @@ describe('Ideas API (integration)', () => {
   });
 
   afterAll(async (): Promise<void> => {
-    await app.close();
-  });
-
-  it('GET /ideas/:id should validate id type', () => {
-    return request(app.getHttpServer()).get('/ideas/not-a-number').expect(400);
+    if (app) {
+      await app.close();
+    }
   });
 });

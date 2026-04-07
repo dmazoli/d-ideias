@@ -12,6 +12,8 @@ interface IdeaPayload {
   expectedBenefits: string;
 }
 
+export type IdeaSortBy = 'recent' | 'id' | 'date' | 'updated' | 'votes' | 'dislike';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -43,12 +45,20 @@ export class IdeasService {
     return this.paginationMeta.asReadonly();
   }
 
-  public async loadIdeas(page: number = 1, pageSize: number = 9): Promise<void> {
+  public async loadIdeas(
+    page: number = 1,
+    pageSize: number = 9,
+    sortBy: IdeaSortBy = 'recent',
+  ): Promise<void> {
     this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
-      const response = await firstValueFrom(this.http.get<PaginatedResponse<Idea>>(this.endpoint, { params: { page, pageSize } }));
+      const response = await firstValueFrom(
+        this.http.get<PaginatedResponse<Idea>>(this.endpoint, {
+          params: { page, pageSize, sortBy },
+        }),
+      );
       this.ideasState.set(response.data.map((idea: Idea) => this.toIdea(idea)));
       this.paginationMeta.set(response.meta);
     } catch (error: unknown) {
@@ -137,6 +147,62 @@ export class IdeasService {
     }
   }
 
+  public async upvoteIdea(id: number): Promise<void> {
+    try {
+      await firstValueFrom(this.http.patch(`${this.endpoint}/${id}/upvote`, {}));
+      this.ideasState.update((ideas: Idea[]) => {
+        return ideas.map((idea: Idea) => {
+          if (idea.id === id) {
+            return new Idea(
+              idea.id,
+              idea.authorRegister,
+              idea.improvementSuggestion,
+              idea.currentProcess,
+              idea.howToImplement,
+              idea.expectedBenefits,
+              idea.upvotes + 1,
+              idea.downvotes,
+              idea.createdAt,
+              idea.updatedAt,
+            );
+          }
+          return idea;
+        });
+      });
+    } catch (error: unknown) {
+      const message = this.getApiErrorMessage(error, 'Nao foi possivel registrar o upvote.');
+      this.alertService.error('Erro ao votar', message);
+    }
+  }
+
+  public async downvoteIdea(id: number): Promise<void> {
+    try {
+      await firstValueFrom(this.http.patch(`${this.endpoint}/${id}/downvote`, {}));
+      this.ideasState.update((ideas: Idea[]) => {
+        return ideas.map((idea: Idea) => {
+          if (idea.id === id) {
+            return new Idea(
+              idea.id,
+              idea.authorRegister,
+              idea.improvementSuggestion,
+              idea.currentProcess,
+              idea.howToImplement,
+              idea.expectedBenefits,
+              idea.upvotes,
+              idea.downvotes + 1,
+              idea.createdAt,
+              idea.updatedAt,
+            );
+          }
+          return idea;
+        });
+      });
+    } catch (error: unknown) {
+      const message = this.getApiErrorMessage(error, 'Nao foi possivel registrar o downvote.');
+      this.alertService.error('Erro ao votar', message);
+    }
+  }
+
   private getApiErrorMessage(error: unknown, fallback: string): string {
     if (typeof error !== 'object' || error === null) {
       return fallback;
@@ -181,6 +247,8 @@ export class IdeasService {
       idea.currentProcess,
       idea.howToImplement,
       idea.expectedBenefits,
+      idea.upvotes,
+      idea.downvotes,
       idea.createdAt,
       idea.updatedAt,
     );

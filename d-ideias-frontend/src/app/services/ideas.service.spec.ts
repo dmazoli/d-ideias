@@ -17,6 +17,8 @@ const mockPayload = {
 const mockIdeaData = {
   id: 1,
   ...mockPayload,
+  upvotes: 0,
+  downvotes: 0,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
@@ -70,8 +72,11 @@ describe('IdeasService', () => {
     it('should populate ideas and clear loading on success', async () => {
       const promise = service.loadIdeas();
 
-      const req = httpController.expectOne('/api/ideas?page=1');
+      const req = httpController.expectOne((request) => request.url === '/api/ideas');
       expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('page')).toBe('1');
+      expect(req.request.params.get('pageSize')).toBe('9');
+      expect(req.request.params.get('sortBy')).toBe('recent');
       req.flush({ data: [mockIdeaData], meta: { count: 1, page: 1, pageSize: 10 } });
 
       await promise;
@@ -88,7 +93,7 @@ describe('IdeasService', () => {
       const promise = service.loadIdeas();
 
       httpController
-        .expectOne('/api/ideas?page=1')
+        .expectOne((request) => request.url === '/api/ideas')
         .flush(
           { message: 'Falha ao carregar ideias da API' },
           { status: 500, statusText: 'Server Error' },
@@ -121,7 +126,7 @@ describe('IdeasService', () => {
     it('should fall back to cached ideas when API fails', async () => {
       const loadPromise = service.loadIdeas();
       httpController
-        .expectOne('/api/ideas?page=1')
+        .expectOne((request) => request.url === '/api/ideas')
         .flush({ data: [mockIdeaData], meta: { count: 1, page: 1, pageSize: 10 } });
       await loadPromise;
 
@@ -190,7 +195,7 @@ describe('IdeasService', () => {
     it('should update the matching idea in the list', async () => {
       const loadPromise = service.loadIdeas();
       httpController
-        .expectOne('/api/ideas?page=1')
+        .expectOne((request) => request.url === '/api/ideas')
         .flush({ data: [mockIdeaData], meta: { count: 1, page: 1, pageSize: 10 } });
       await loadPromise;
 
@@ -241,7 +246,7 @@ describe('IdeasService', () => {
     it('should remove the idea from the list and return true', async () => {
       const loadPromise = service.loadIdeas();
       httpController
-        .expectOne('/api/ideas?page=1')
+        .expectOne((request) => request.url === '/api/ideas')
         .flush({ data: [mockIdeaData], meta: { count: 1, page: 1, pageSize: 10 } });
       await loadPromise;
 
@@ -278,6 +283,46 @@ describe('IdeasService', () => {
         'Erro ao remover ideia',
         'Falha ao remover ideia',
       );
+    });
+  });
+
+  describe('voteIdea', () => {
+    it('should increment upvotes for matching idea', async () => {
+      const loadPromise = service.loadIdeas();
+      httpController
+        .expectOne((request) => request.url === '/api/ideas')
+        .flush({ data: [mockIdeaData], meta: { count: 1, page: 1, pageSize: 10 } });
+      await loadPromise;
+
+      const promise = service.upvoteIdea(1);
+
+      const req = httpController.expectOne('/api/ideas/1/upvote');
+      expect(req.request.method).toBe('PATCH');
+      req.flush({});
+
+      await promise;
+
+      expect(service.ideas()()[0].upvotes).toBe(1);
+      expect(service.ideas()()[0].downvotes).toBe(0);
+    });
+
+    it('should increment downvotes for matching idea', async () => {
+      const loadPromise = service.loadIdeas();
+      httpController
+        .expectOne((request) => request.url === '/api/ideas')
+        .flush({ data: [mockIdeaData], meta: { count: 1, page: 1, pageSize: 10 } });
+      await loadPromise;
+
+      const promise = service.downvoteIdea(1);
+
+      const req = httpController.expectOne('/api/ideas/1/downvote');
+      expect(req.request.method).toBe('PATCH');
+      req.flush({});
+
+      await promise;
+
+      expect(service.ideas()()[0].upvotes).toBe(0);
+      expect(service.ideas()()[0].downvotes).toBe(1);
     });
   });
 });

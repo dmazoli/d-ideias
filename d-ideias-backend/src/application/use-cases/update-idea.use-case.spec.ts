@@ -13,8 +13,12 @@ describe('UpdateIdeaUseCase', () => {
       save: jest.fn(),
       findById: jest.fn(),
       findAll: jest.fn(),
+      findAllWithSort: jest.fn(),
+      count: jest.fn(),
       update: jest.fn(),
       deleteById: jest.fn(),
+      incrementUpvotes: jest.fn(),
+      incrementDownvotes: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +47,8 @@ describe('UpdateIdeaUseCase', () => {
         currentProcess: 'Manual steps',
         howToImplement: 'Automation',
         expectedBenefits: 'Faster delivery',
+        upvotes: 2,
+        downvotes: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -103,6 +109,8 @@ describe('UpdateIdeaUseCase', () => {
         currentProcess: 'New process',
         howToImplement: 'Automation',
         expectedBenefits: 'Faster delivery',
+        upvotes: 2,
+        downvotes: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

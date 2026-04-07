@@ -31,6 +31,12 @@ export class Idea {
   @Column('text')
   expectedBenefits!: string;
 
+  @Column('integer', { default: 0, unsigned: true })
+  upvotes!: number;
+
+  @Column('integer', { default: 0, unsigned: true })
+  downvotes!: number;
+
   @CreateDateColumn()
   createdAt!: Date;
 

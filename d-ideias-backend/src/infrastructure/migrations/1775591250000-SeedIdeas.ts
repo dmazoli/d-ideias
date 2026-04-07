@@ -17,6 +17,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Redução de 80% no tempo de aprovação, liberação de 40 horas/mês de mão de obra, melhor experiência para usuários.',
         createdAt: '2025-12-15T10:30:00Z',
         updatedAt: '2026-01-20T14:45:00Z',
+        upvotes: 24,
+        downvotes: 3,
       },
       {
         authorRegister: 54321,
@@ -29,6 +31,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Melhor tomada de decisão, economia de 5 horas/semana em coleta de dados, visibilidade estratégica aumentada.',
         createdAt: '2025-11-08T09:15:00Z',
         updatedAt: '2026-02-03T16:20:00Z',
+        upvotes: 18,
+        downvotes: 1,
       },
       {
         authorRegister: 23456,
@@ -42,6 +46,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Redução de 60% na carga de trabalho, tempo de resposta <5 minutos, satisfação de cliente aumentada.',
         createdAt: '2025-10-22T13:45:00Z',
         updatedAt: '2026-02-10T11:30:00Z',
+        upvotes: 32,
+        downvotes: 5,
       },
       {
         authorRegister: 67890,
@@ -54,6 +60,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Redução de 90% no tempo de execução, melhor experiência de usuário, redução de carga no servidor de BD.',
         createdAt: '2025-09-05T08:00:00Z',
         updatedAt: '2026-01-28T15:10:00Z',
+        upvotes: 45,
+        downvotes: 2,
       },
       {
         authorRegister: 11111,
@@ -66,6 +74,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Redução de 50% no tempo ramp-up, maior retenção, cultura de aprendizado fortalecida.',
         createdAt: '2025-08-18T11:20:00Z',
         updatedAt: '2026-03-01T09:50:00Z',
+        upvotes: 28,
+        downvotes: 0,
       },
       {
         authorRegister: 22222,
@@ -78,6 +88,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Minimização de risco de perda de dados, recuperação em <1 hora nos piores cenários.',
         createdAt: '2025-07-30T14:20:00Z',
         updatedAt: '2026-02-15T10:15:00Z',
+        upvotes: 35,
+        downvotes: 4,
       },
       {
         authorRegister: 33333,
@@ -91,6 +103,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Maior escalabilidade, melhor resiliência, deploys independentes, time mais ágil.',
         createdAt: '2025-06-12T09:30:00Z',
         updatedAt: '2026-01-08T13:45:00Z',
+        upvotes: 52,
+        downvotes: 8,
       },
       {
         authorRegister: 44444,
@@ -104,6 +118,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Diagnóstico mais rápido, detecção proativa de problemas, melhor observabilidade.',
         createdAt: '2025-05-25T11:00:00Z',
         updatedAt: '2026-02-28T08:30:00Z',
+        upvotes: 41,
+        downvotes: 2,
       },
       {
         authorRegister: 55555,
@@ -117,6 +133,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Consistência visual, redução de 40% em tempo de desenvolvimento, melhor UX.',
         createdAt: '2025-04-18T15:45:00Z',
         updatedAt: '2026-01-12T12:20:00Z',
+        upvotes: 38,
+        downvotes: 3,
       },
       {
         authorRegister: 66666,
@@ -129,6 +147,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Detecção precoce de gargalos, confiança em deploys, redução de incidentes em produção.',
         createdAt: '2025-03-10T10:15:00Z',
         updatedAt: '2026-02-22T14:00:00Z',
+        upvotes: 29,
+        downvotes: 1,
       },
       {
         authorRegister: 77777,
@@ -141,6 +161,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Segurança aumentada, conformidade com regulamentações, redução de fraudes.',
         createdAt: '2025-02-28T08:40:00Z',
         updatedAt: '2026-03-05T09:15:00Z',
+        upvotes: 47,
+        downvotes: 6,
       },
       {
         authorRegister: 88888,
@@ -153,6 +175,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Redução de 35% em tickets, satisfação de usuário aumentada, liberação de 30h/semana do suporte.',
         createdAt: '2025-01-15T13:25:00Z',
         updatedAt: '2026-02-18T11:40:00Z',
+        upvotes: 33,
+        downvotes: 2,
       },
       {
         authorRegister: 99999,
@@ -166,6 +190,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Melhor compatibilidade, evolução sem quebras, melhor experiência para clientes.',
         createdAt: '2024-12-20T16:50:00Z',
         updatedAt: '2026-01-30T10:25:00Z',
+        upvotes: 26,
+        downvotes: 3,
       },
       {
         authorRegister: 10101,
@@ -179,6 +205,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Economia de 40h/mês, zero erros, auditoria mais fácil, conformidade garantida.',
         createdAt: '2024-11-05T12:10:00Z',
         updatedAt: '2026-02-05T15:30:00Z',
+        upvotes: 19,
+        downvotes: 0,
       },
       {
         authorRegister: 20202,
@@ -191,12 +219,14 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           'Melhoria de 70% em latência, redução de carga no BD, economia em infraestrutura.',
         createdAt: '2024-10-18T09:35:00Z',
         updatedAt: '2026-01-25T14:15:00Z',
+        upvotes: 51,
+        downvotes: 4,
       },
     ];
 
     for (const idea of ideas) {
       await queryRunner.query(
-        `INSERT INTO "ideas" ("authorRegister", "improvementSuggestion", "currentProcess", "howToImplement", "expectedBenefits", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        `INSERT INTO "ideas" ("authorRegister", "improvementSuggestion", "currentProcess", "howToImplement", "expectedBenefits", "createdAt", "updatedAt", "upvotes", "downvotes") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
         [
           idea.authorRegister,
           idea.improvementSuggestion,
@@ -205,6 +235,8 @@ export class SeedIdeas1775591250000 implements MigrationInterface {
           idea.expectedBenefits,
           idea.createdAt,
           idea.updatedAt,
+          idea.upvotes,
+          idea.downvotes,
         ],
       );
     }
