@@ -8,6 +8,15 @@
       >
         Ideia {{ idea().id }}
       </span>
+      <div class="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-slate-500">
+        <span>O que pode ser melhorado</span>
+        <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
+          <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
+          <span class="tooltip-content"
+            >Descricao textual do que pode ser melhorado na empresa.</span
+          >
+        </span>
+      </div>
       <h3 class="text-xl font-semibold text-white">{{ idea().improvementSuggestion }}</h3>
     </div>
 
@@ -19,23 +28,60 @@
     </a>
   </div>
 
-  <p class="mt-4 text-sm leading-7 text-slate-300">{{ idea().currentProcess }}</p>
+  <div class="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-slate-500">
+    <span>Como é feito hoje</span>
+    <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
+      <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
+      <span class="tooltip-content"
+        >Descricao textual de como o processo a ser melhorado esta sendo feito hoje.</span
+      >
+    </span>
+  </div>
+  <p class="mt-2 text-sm leading-7 text-slate-300">{{ idea().currentProcess }}</p>
 
   <dl class="mt-6 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
     <div class="rounded-2xl bg-white/5 p-3">
-      <dt class="text-slate-500">Matricula</dt>
+      <dt class="flex items-center gap-2 text-slate-500">
+        <span>Numero de Registro (RE)</span>
+        <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
+          <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
+          <span class="tooltip-content"
+            >Numero de Registro (RE) do colaborador que está contribuindo com a ideia.</span
+          >
+        </span>
+      </dt>
       <dd class="mt-2 font-semibold text-white">{{ idea().authorRegister }}</dd>
     </div>
     <div class="rounded-2xl bg-white/5 p-3">
-      <dt class="text-slate-500">Criada em</dt>
+      <dt class="flex items-center gap-2 text-slate-500">
+        <span>Data de registro da ideia</span>
+        <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
+          <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
+          <span class="tooltip-content">Data em que foi preenchida a ideia.</span>
+        </span>
+      </dt>
       <dd class="mt-2 font-semibold text-white">{{ idea().createdAt | date: 'dd/MM/yyyy' }}</dd>
     </div>
     <div class="rounded-2xl bg-white/5 p-3 sm:col-span-2 xl:col-span-1 2xl:col-span-2">
-      <dt class="text-slate-500">Como implementar</dt>
+      <dt class="flex items-center gap-2 text-slate-500">
+        <span>Como pode ser melhorado</span>
+        <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
+          <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
+          <span class="tooltip-content"
+            >Descricao textual de como a melhoria deve ser implementada.</span
+          >
+        </span>
+      </dt>
       <dd class="mt-2 font-semibold leading-6 text-white">{{ idea().howToImplement }}</dd>
     </div>
     <div class="rounded-2xl bg-white/5 p-3 sm:col-span-2 xl:col-span-1 2xl:col-span-2">
-      <dt class="text-slate-500">Beneficios esperados</dt>
+      <dt class="flex items-center gap-2 text-slate-500">
+        <span>Qual e o beneficio</span>
+        <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
+          <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
+          <span class="tooltip-content">Beneficio esperado pela melhoria proposta.</span>
+        </span>
+      </dt>
       <dd class="mt-2 font-semibold leading-6 text-white">{{ idea().expectedBenefits }}</dd>
     </div>
   </dl>

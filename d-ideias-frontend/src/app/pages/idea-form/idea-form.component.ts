@@ -3,6 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { Idea } from '@models/idea.model';
 import { IdeasService } from '@services/ideas.service';
 
@@ -10,7 +12,7 @@ import { IdeasService } from '@services/ideas.service';
   selector: 'app-idea-form',
   templateUrl: './idea-form.component.html',
   styleUrl: './idea-form.component.css',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, FaIconComponent],
 })
 export class IdeaFormComponent {
   private readonly formBuilder = inject(FormBuilder);
@@ -41,6 +43,14 @@ export class IdeaFormComponent {
   protected readonly submitLabel = computed<string>(() => {
     return this.isEditMode() ? 'Salvar alteracoes' : 'Criar ideia';
   });
+
+  protected readonly registrationDate = computed<string>(() => {
+    const idea = this.selectedIdea();
+    const date = idea?.createdAt ?? new Date();
+    return new Intl.DateTimeFormat('pt-BR').format(date);
+  });
+
+  protected readonly faCircleInfo = faCircleInfo;
 
   protected readonly form = this.formBuilder.nonNullable.group({
     authorRegister: [0, [Validators.required, Validators.min(1)]],
@@ -81,7 +91,6 @@ export class IdeaFormComponent {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {
-      console.warn('Formulário inválido. Verifique os campos e tente novamente.');
       return;
     }
 
