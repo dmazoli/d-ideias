@@ -1,0 +1,11 @@
+# IDE
+/.vscode/
+/.idea/
+
+# Node modules and build artifacts
+node_modules/
+dist/
+.angular/
+
+# Environment variables
+.env

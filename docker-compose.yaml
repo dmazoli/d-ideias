@@ -1,0 +1,60 @@
+volumes:
+  db_data:
+
+
+networks:
+  d-ideias-network:
+
+
+services:
+  db:
+    image: postgres:latest
+    container_name: d-ideias-db
+    environment:
+      POSTGRES_DB: d_ideias
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - d-ideias-network
+    volumes:
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  api:
+    build:
+      context: ./d-ideias-backend
+      dockerfile: Dockerfile
+    container_name: d-ideias-api
+    command: npm run start:dev
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - d-ideias-network
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./d-ideias-backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./d-ideias-frontend
+      dockerfile: Dockerfile
+    container_name: d-ideias-frontend
+    command: npm run start -- --host 0.0.0.0 --port 4200
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - d-ideias-network
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./d-ideias-frontend:/app
+      - /app/node_modules
