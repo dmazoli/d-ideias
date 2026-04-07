@@ -14,6 +14,8 @@ services:
       POSTGRES_DB: d_ideias
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    env_file:
+      - .env
     networks:
       - d-ideias-network
     volumes:
@@ -31,6 +33,8 @@ services:
       dockerfile: Dockerfile
     container_name: d-ideias-api
     command: npm run start:dev
+    env_file:
+      - .env
     depends_on:
       db:
         condition: service_healthy

@@ -23,4 +23,8 @@ format:
 	@cd d-ideias-backend && npm run format
 	@cd d-ideias-frontend && npm run format
 	@echo "Code formatted successfully."
-	
+
+test-backend:
+	@echo "Running backend tests..."
+	@cd d-ideias-backend && npm run test && npm run test:e2e
+	@echo "Backend tests completed."

@@ -19,6 +19,11 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "strict": false,
+    "types": [
+      "node",
+      "jest"
+    ]
   }
 }
