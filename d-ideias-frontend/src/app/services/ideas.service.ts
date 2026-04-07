@@ -43,13 +43,12 @@ export class IdeasService {
     return this.paginationMeta.asReadonly();
   }
 
-  public async loadIdeas(page: number = 1): Promise<void> {
+  public async loadIdeas(page: number = 1, pageSize: number = 9): Promise<void> {
     this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
-      const url = `${this.endpoint}?page=${page}`;
-      const response = await firstValueFrom(this.http.get<PaginatedResponse<Idea>>(url));
+      const response = await firstValueFrom(this.http.get<PaginatedResponse<Idea>>(this.endpoint, { params: { page, pageSize } }));
       this.ideasState.set(response.data.map((idea: Idea) => this.toIdea(idea)));
       this.paginationMeta.set(response.meta);
     } catch (error: unknown) {
