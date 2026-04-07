@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -7,11 +8,15 @@ import {
 } from 'typeorm';
 
 @Entity('ideas')
+@Check(
+  'CHK_ideas_authorRegister_unsigned_max_99999',
+  '"authorRegister" > 0 AND "authorRegister" <= 99999',
+)
 export class Idea {
   @PrimaryGeneratedColumn('increment')
   id?: number;
 
-  @Column('smallint')
+  @Column('integer')
   authorRegister!: number;
 
   @Column('text')
