@@ -15,4 +15,3 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 });
-

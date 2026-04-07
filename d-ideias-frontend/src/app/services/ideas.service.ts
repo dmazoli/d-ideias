@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal, type Signal, inject } from '@angular/core';
 import { Idea } from '@models/idea.model';
-import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
+import { AlertService } from './alert.service';
 
 interface IdeaPayload {
   authorRegister: number;
@@ -17,10 +17,13 @@ interface IdeaPayload {
 })
 export class IdeasService {
   private readonly http = inject(HttpClient);
+  private readonly alertService = inject(AlertService);
 
   private readonly endpoint = `/api/ideas`;
 
   private readonly ideasState = signal<Idea[]>([]);
+  private readonly paginationMeta = signal<PaginationMeta | null>(null);
+
   private readonly loadingState = signal<boolean>(false);
   private readonly errorState = signal<string | null>(null);
 
@@ -36,16 +39,24 @@ export class IdeasService {
     return this.errorState.asReadonly();
   }
 
-  public async loadIdeas(): Promise<void> {
+  public pagination(): Signal<PaginationMeta | null> {
+    return this.paginationMeta.asReadonly();
+  }
+
+  public async loadIdeas(page: number = 1): Promise<void> {
     this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
-      const response = await firstValueFrom(this.http.get<Idea[]>(this.endpoint));
-      this.ideasState.set(response.map((idea: Idea) => this.toIdea(idea)));
-    } catch {
+      const url = `${this.endpoint}?page=${page}`;
+      const response = await firstValueFrom(this.http.get<PaginatedResponse<Idea>>(url));
+      this.ideasState.set(response.data.map((idea: Idea) => this.toIdea(idea)));
+      this.paginationMeta.set(response.meta);
+    } catch (error: unknown) {
+      const message = this.getApiErrorMessage(error, 'Nao foi possivel carregar ideias da API.');
       this.ideasState.set([]);
-      this.errorState.set('Nao foi possivel carregar ideias da API.');
+      this.errorState.set(message);
+      this.alertService.error('Erro ao carregar ideias', message);
     } finally {
       this.loadingState.set(false);
     }
@@ -70,9 +81,12 @@ export class IdeasService {
       const response = await firstValueFrom(this.http.post<Idea>(this.endpoint, payload));
       const idea = this.toIdea(response);
       this.ideasState.update((ideas: Idea[]) => [idea, ...ideas]);
+      this.alertService.success('Ideia criada', 'A ideia foi criada com sucesso.');
       return idea;
-    } catch {
-      this.errorState.set('Nao foi possivel criar a ideia.');
+    } catch (error: unknown) {
+      const message = this.getApiErrorMessage(error, 'Nao foi possivel criar a ideia.');
+      this.errorState.set(message);
+      this.alertService.error('Erro ao criar ideia', message);
       return null;
     } finally {
       this.loadingState.set(false);
@@ -91,9 +105,12 @@ export class IdeasService {
       this.ideasState.update((ideas: Idea[]) => {
         return ideas.map((idea: Idea) => (idea.id === id ? updatedIdea : idea));
       });
+      this.alertService.success('Ideia atualizada', 'A ideia foi atualizada com sucesso.');
       return updatedIdea;
-    } catch {
-      this.errorState.set('Nao foi possivel atualizar a ideia.');
+    } catch (error: unknown) {
+      const message = this.getApiErrorMessage(error, 'Nao foi possivel atualizar a ideia.');
+      this.errorState.set(message);
+      this.alertService.error('Erro ao atualizar ideia', message);
       return null;
     } finally {
       this.loadingState.set(false);
@@ -109,13 +126,52 @@ export class IdeasService {
       this.ideasState.update((ideas: Idea[]) => {
         return ideas.filter((idea: Idea) => idea.id !== id);
       });
+      this.alertService.success('Ideia removida', 'A ideia foi removida com sucesso.');
       return true;
-    } catch {
-      this.errorState.set('Nao foi possivel deletar a ideia.');
+    } catch (error: unknown) {
+      const message = this.getApiErrorMessage(error, 'Nao foi possivel deletar a ideia.');
+      this.errorState.set(message);
+      this.alertService.error('Erro ao remover ideia', message);
       return false;
     } finally {
       this.loadingState.set(false);
     }
+  }
+
+  private getApiErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error !== 'object' || error === null) {
+      return fallback;
+    }
+
+    const httpError = error as { error?: unknown; message?: unknown };
+
+    if (typeof httpError.error === 'string' && httpError.error.trim().length > 0) {
+      return httpError.error;
+    }
+
+    if (typeof httpError.error === 'object' && httpError.error !== null) {
+      const apiError = httpError.error as { message?: unknown };
+
+      if (typeof apiError.message === 'string' && apiError.message.trim().length > 0) {
+        return apiError.message;
+      }
+
+      if (Array.isArray(apiError.message)) {
+        const messages = apiError.message.filter((value: unknown) => {
+          return typeof value === 'string' && value.trim().length > 0;
+        }) as string[];
+
+        if (messages.length > 0) {
+          return messages.join(' | ');
+        }
+      }
+    }
+
+    if (typeof httpError.message === 'string' && httpError.message.trim().length > 0) {
+      return httpError.message;
+    }
+
+    return fallback;
   }
 
   private toIdea(idea: Idea): Idea {
