@@ -12,7 +12,7 @@ export class HomeComponent implements OnInit {
   private readonly ideasService = inject(IdeasService);
 
   protected readonly ideas = this.ideasService.ideas();
-  protected readonly status = this.ideasService.status();
+  protected readonly loading = this.ideasService.loading();
 
   public ngOnInit(): void {
     void this.ideasService.loadIdeas();

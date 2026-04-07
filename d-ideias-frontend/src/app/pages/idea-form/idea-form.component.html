@@ -150,10 +150,14 @@
       <div class="w-full flex flex-wrap gap-3">
         @if (isEditMode()) {
         <button type="button"
-          class="flex items-center gap-2 rounded-full border border-rose-400/50 bg-rose-950/40 px-4 py-2 text-sm font-medium text-rose-200 transition hover:border-rose-400/80 hover:text-rose-100"
-          (click)="handleDelete()">
+          class="flex items-center gap-2 rounded-full border border-rose-400/50 bg-rose-950/40 px-4 py-2 text-sm font-medium text-rose-200 transition hover:border-rose-400/80 hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="loading()" (click)="handleDelete()">
+          @if (loading()) {
+          <fa-icon [icon]="faSpinner" [animation]="'spin-pulse'" class="ml-2"></fa-icon>
+          } @else {
           Deletar
           <fa-icon [icon]="faTrash" class="ml-2"></fa-icon>
+          }
         </button>
         }
 
@@ -163,12 +167,21 @@
         </a>
 
         <button type="submit"
-          class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-          [disabled]="form.invalid">
+          class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="form.invalid || loading()">
+          @if (loading()) {
+          <fa-icon [icon]="faSpinner" [animation]="'spin-pulse'" class="ml-2"></fa-icon>
+          } @else {
           {{ submitLabel() }}
           <fa-icon [icon]="faSave" class="ml-2"></fa-icon>
+          }
         </button>
       </div>
     </div>
   </form>
+
+  @if (showDeleteModal()) {
+  <app-confirm-modal message="Tem certeza que deseja excluir esta ideia? Esta ação não pode ser desfeita."
+    (confirmed)="confirmDelete()" (cancelled)="showDeleteModal.set(false)" />
+  }
 </main>

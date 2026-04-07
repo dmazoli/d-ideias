@@ -5,9 +5,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faCircleInfo, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faTrash, faSave, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { Idea } from '@models/idea.model';
 import { IdeasService } from '@services/ideas.service';
+import { ConfirmModalComponent } from '@components/confirm-modal/confirm-modal.component';
 
 type IdeaFormControlName =
   | 'authorRegister'
@@ -20,7 +21,7 @@ type IdeaFormControlName =
   selector: 'app-idea-form',
   templateUrl: './idea-form.component.html',
   styleUrl: './idea-form.component.css',
-  imports: [NgClass, ReactiveFormsModule, RouterLink, FaIconComponent],
+  imports: [NgClass, ReactiveFormsModule, RouterLink, FaIconComponent, ConfirmModalComponent],
 })
 export class IdeaFormComponent {
   private readonly formBuilder = inject(FormBuilder);
@@ -61,6 +62,11 @@ export class IdeaFormComponent {
   protected readonly faCircleInfo = faCircleInfo;
   protected readonly faTrash = faTrash;
   protected readonly faSave = faSave;
+  protected readonly faSpinner = faSpinner;
+
+  protected readonly loading = this.ideasService.loading();
+
+  protected readonly showDeleteModal = signal<boolean>(false);
 
   protected readonly form = this.formBuilder.nonNullable.group({
     authorRegister: ['', [Validators.required, Validators.pattern(/^[1-9]\d{0,4}$/)]],
@@ -181,15 +187,19 @@ export class IdeaFormComponent {
     return 'Valor invalido.';
   }
 
-  handleDelete(): void {
+  protected handleDelete(): void {
+    this.showDeleteModal.set(true);
+  }
+
+  protected async confirmDelete(): Promise<void> {
+    this.showDeleteModal.set(false);
     const id = this.ideaId();
 
     if (id === null) {
       return;
     }
 
-    void this.ideasService.deleteIdea(id).then(() => {
-      this.router.navigate(['/']);
-    });
+    await this.ideasService.deleteIdea(id);
+    await this.router.navigate(['/']);
   }
 }

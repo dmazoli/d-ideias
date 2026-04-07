@@ -4,8 +4,6 @@ import { Idea } from '@models/idea.model';
 import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 
-type IdeasStatus = 'idle' | 'loading' | 'success' | 'error';
-
 interface IdeaPayload {
   authorRegister: number;
   improvementSuggestion: string;
@@ -23,15 +21,15 @@ export class IdeasService {
   private readonly endpoint = `/api/ideas`;
 
   private readonly ideasState = signal<Idea[]>([]);
-  private readonly statusState = signal<IdeasStatus>('idle');
+  private readonly loadingState = signal<boolean>(false);
   private readonly errorState = signal<string | null>(null);
 
   public ideas(): Signal<Idea[]> {
     return this.ideasState.asReadonly();
   }
 
-  public status(): Signal<IdeasStatus> {
-    return this.statusState.asReadonly();
+  public loading(): Signal<boolean> {
+    return this.loadingState.asReadonly();
   }
 
   public error(): Signal<string | null> {
@@ -39,17 +37,17 @@ export class IdeasService {
   }
 
   public async loadIdeas(): Promise<void> {
-    this.statusState.set('loading');
+    this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
       const response = await firstValueFrom(this.http.get<Idea[]>(this.endpoint));
       this.ideasState.set(response.map((idea: Idea) => this.toIdea(idea)));
-      this.statusState.set('success');
     } catch {
       this.ideasState.set([]);
-      this.statusState.set('error');
       this.errorState.set('Nao foi possivel carregar ideias da API.');
+    } finally {
+      this.loadingState.set(false);
     }
   }
 
@@ -65,26 +63,24 @@ export class IdeasService {
   }
 
   public async createIdea(payload: IdeaPayload): Promise<Idea | null> {
-    this.statusState.set('loading');
+    this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
-      console.error('Creating idea with payload:', payload);
       const response = await firstValueFrom(this.http.post<Idea>(this.endpoint, payload));
       const idea = this.toIdea(response);
       this.ideasState.update((ideas: Idea[]) => [idea, ...ideas]);
-      this.statusState.set('success');
       return idea;
-    } catch (error) {
-      console.error('Error creating idea:', error);
-      this.statusState.set('error');
+    } catch {
       this.errorState.set('Nao foi possivel criar a ideia.');
       return null;
+    } finally {
+      this.loadingState.set(false);
     }
   }
 
   public async updateIdea(id: number, payload: IdeaPayload): Promise<Idea | null> {
-    this.statusState.set('loading');
+    this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
@@ -95,17 +91,17 @@ export class IdeasService {
       this.ideasState.update((ideas: Idea[]) => {
         return ideas.map((idea: Idea) => (idea.id === id ? updatedIdea : idea));
       });
-      this.statusState.set('success');
       return updatedIdea;
     } catch {
-      this.statusState.set('error');
       this.errorState.set('Nao foi possivel atualizar a ideia.');
       return null;
+    } finally {
+      this.loadingState.set(false);
     }
   }
 
   public async deleteIdea(id: number): Promise<boolean> {
-    this.statusState.set('loading');
+    this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
@@ -113,12 +109,12 @@ export class IdeasService {
       this.ideasState.update((ideas: Idea[]) => {
         return ideas.filter((idea: Idea) => idea.id !== id);
       });
-      this.statusState.set('success');
       return true;
     } catch {
-      this.statusState.set('error');
       this.errorState.set('Nao foi possivel deletar a ideia.');
       return false;
+    } finally {
+      this.loadingState.set(false);
     }
   }
 
