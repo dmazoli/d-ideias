@@ -75,54 +75,19 @@ Itens ainda previstos para implementação:
 
 ## Execução do projeto
 
-### Forma planejada
-
-A intenção é executar o ambiente completo com Docker Compose, incluindo:
-
-- frontend
-- backend
-- banco de dados relacional
-
-No momento, o arquivo de orquestração ainda não foi criado. Quando essa etapa for concluída, este README deverá ser atualizado com o comando oficial de subida do ambiente.
-
-Exemplo esperado futuramente:
 
 ```bash
 docker compose up --build
 ```
 
-### Execução local temporária
-
-Enquanto o ambiente com Docker Compose não estiver configurado, os projetos podem ser executados separadamente.
-
-#### Backend
-
-```bash
-cd d-ideias-backend
-npm install
-npm run start:dev
-```
-
-Aplicação disponível por padrão em `http://localhost:3000`.
-
-#### Frontend
-
-```bash
-cd d-ideias-frontend
-npm install
-npm start
-```
-
-Aplicação disponível por padrão em `http://localhost:4200`.
-
 ## Entregáveis esperados
 
 Com a conclusão do projeto, os seguintes itens devem estar disponíveis:
 
-- SQL de criação do banco de dados
-- Código-fonte do backend
-- Código-fonte do frontend
-- Instruções de execução do ambiente
+- [X] SQL de criação do banco de dados ([migration](d-ideias-backend/src/infrastructure/migrations/1775591246843-Initial.ts))
+- [X] Código-fonte do backend
+- [X] Código-fonte do frontend
+- [X] Instruções de execução do ambiente
 
 ## Observações
 

@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -18,16 +19,20 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import type { Idea } from '../../domain/entities';
 import {
   CreateIdeaUseCase,
+  DownvoteIdeaUseCase,
   DeleteIdeaUseCase,
   GetIdeaByIdUseCase,
   ListIdeasUseCase,
+  UpvoteIdeaUseCase,
   UpdateIdeaUseCase,
 } from '../../application/use-cases';
+import type { IdeaSortBy } from '../../domain/repositories';
 
 @ApiTags('Ideas')
 @Controller('ideas')
@@ -38,6 +43,8 @@ export class IdeasController {
     private readonly getIdeaByIdUseCase: GetIdeaByIdUseCase,
     private readonly updateIdeaUseCase: UpdateIdeaUseCase,
     private readonly deleteIdeaUseCase: DeleteIdeaUseCase,
+    private readonly upvoteIdeaUseCase: UpvoteIdeaUseCase,
+    private readonly downvoteIdeaUseCase: DownvoteIdeaUseCase,
   ) {}
 
   @Post()
@@ -93,12 +100,37 @@ export class IdeasController {
 
   @Get()
   @ApiOperation({ summary: 'Listar todas as ideias' })
+  @ApiQuery({
+    name: 'page',
+    type: 'number',
+    description: 'Número da página (padrão: 1)',
+    required: false,
+    nullable: true,
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    type: 'number',
+    description: 'Número de itens por página (padrão: 10)',
+    required: false,
+    nullable: true,
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['recent', 'id', 'date', 'updated', 'votes', 'dislike'],
+    description:
+      'Campo de ordenação: recent | id | date | updated | votes | dislike (padrão: recent)',
+  })
   @ApiOkResponse({
     description: 'Lista de ideias',
     isArray: true,
   })
-  public async list(): Promise<Idea[]> {
-    return this.listIdeasUseCase.execute();
+  public async list(
+    @Query('page') page?: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('sortBy') sortBy?: IdeaSortBy,
+  ): Promise<PaginatedResponse<Idea>> {
+    return this.listIdeasUseCase.execute(page, pageSize, sortBy);
   }
 
   @Get(':id')
@@ -152,5 +184,23 @@ export class IdeasController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.deleteIdeaUseCase.execute(id);
+  }
+
+  @Patch(':id/upvote')
+  @ApiOperation({ summary: 'Adicionar um upvote na ideia' })
+  @ApiParam({ name: 'id', type: 'number', description: 'ID da ideia' })
+  @ApiOkResponse({ description: 'Upvote registrado com sucesso' })
+  @ApiNotFoundResponse({ description: 'Ideia não encontrada' })
+  public async upvote(@Param('id', ParseIntPipe) id: number): Promise<Idea> {
+    return this.upvoteIdeaUseCase.execute(id);
+  }
+
+  @Patch(':id/downvote')
+  @ApiOperation({ summary: 'Adicionar um downvote na ideia' })
+  @ApiParam({ name: 'id', type: 'number', description: 'ID da ideia' })
+  @ApiOkResponse({ description: 'Downvote registrado com sucesso' })
+  @ApiNotFoundResponse({ description: 'Ideia não encontrada' })
+  public async downvote(@Param('id', ParseIntPipe) id: number): Promise<Idea> {
+    return this.downvoteIdeaUseCase.execute(id);
   }
 }

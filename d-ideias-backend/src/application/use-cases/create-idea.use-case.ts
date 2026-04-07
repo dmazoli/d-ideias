@@ -18,6 +18,8 @@ export class CreateIdeaUseCase {
 
     const idea: Idea = {
       ...payload,
+      upvotes: 0,
+      downvotes: 0,
       createdAt: now,
       updatedAt: now,
     };

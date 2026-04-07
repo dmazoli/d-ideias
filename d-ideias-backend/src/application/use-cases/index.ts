@@ -7,4 +7,6 @@ export { ListIdeasUseCase } from './list-ideas.use-case';
 export { GetIdeaByIdUseCase } from './get-idea-by-id.use-case';
 export { UpdateIdeaUseCase } from './update-idea.use-case';
 export { DeleteIdeaUseCase } from './delete-idea.use-case';
+export { UpvoteIdeaUseCase } from './upvote-idea.use-case';
+export { DownvoteIdeaUseCase } from './downvote-idea.use-case';
 export { IdeaUseCasesModule } from './idea-use-cases.module';

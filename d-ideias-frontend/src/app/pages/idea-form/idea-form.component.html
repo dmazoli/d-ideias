@@ -1,19 +1,22 @@
 <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-8 lg:px-10">
   <section
-    class="rounded-[32px] border border-white/10 bg-white/5 px-6 py-6 shadow-2xl shadow-slate-950/30 backdrop-blur xl:px-8">
+    class="rounded-[32px] border border-white/10 bg-white/5 px-6 py-6 shadow-2xl shadow-slate-950/30 backdrop-blur xl:px-8"
+  >
     <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
       <div class="space-y-3">
-        <a routerLink="/"
-          class="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.32em] text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200">
+        <a
+          routerLink="/"
+          class="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.32em] text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200"
+        >
           Voltar para listagem
         </a>
         <div>
           <h1 class="text-4xl font-semibold tracking-tight text-white">{{ pageTitle() }}</h1>
           <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
             {{
-            isEditMode()
-            ? 'Revise os dados da ideia selecionada.'
-            : 'Preencha os campos para cadastrar uma nova ideia.'
+              isEditMode()
+                ? 'Revise os dados da ideia selecionada.'
+                : 'Preencha os campos para cadastrar uma nova ideia.'
             }}
           </p>
         </div>
@@ -21,12 +24,17 @@
     </div>
   </section>
 
-  <form [formGroup]="form" (ngSubmit)="handleSubmit()"
-    class="grid gap-6 rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-slate-950/20 backdrop-blur">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="handleSubmit()"
+    class="grid gap-6 rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-slate-950/20 backdrop-blur"
+  >
     @if (showInvalidFormWarning()) {
-    <div class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100">
-      Existem campos invalidos no formulario. Revise os avisos abaixo antes de enviar.
-    </div>
+      <div
+        class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100"
+      >
+        Existem campos invalidos no formulario. Revise os avisos abaixo antes de enviar.
+      </div>
     }
 
     <div class="grid gap-6 md:grid-cols-2">
@@ -35,33 +43,47 @@
           <span>Numero de Registro (RE)</span>
           <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
             <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
-            <span class="tooltip-content">Numero de Registro (RE) do colaborador que esta contribuindo com a
-              ideia.</span>
+            <span class="tooltip-content"
+              >Numero de Registro (RE) do colaborador que esta contribuindo com a ideia.</span
+            >
           </span>
         </label>
-        <input type="text" formControlName="authorRegister" inputmode="numeric" maxlength="5" autocomplete="off"
-          (input)="handleAuthorRegisterInput($event)" [ngClass]="{
+        <input
+          type="text"
+          formControlName="authorRegister"
+          inputmode="numeric"
+          maxlength="5"
+          autocomplete="off"
+          (input)="handleAuthorRegisterInput($event)"
+          [ngClass]="{
             'border-white/10': !showControlError('authorRegister'),
             'border-rose-400/50': showControlError('authorRegister'),
           }"
-          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50" />
+          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        />
         @if (showControlError('authorRegister')) {
-        <div class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100">
-          {{ controlErrorMessage('authorRegister') }}
-        </div>
+          <div
+            class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100"
+          >
+            {{ controlErrorMessage('authorRegister') }}
+          </div>
         }
       </div>
 
       <div class="space-y-2 text-sm text-slate-300">
         <label class="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-slate-500">
-          <span>Data de registro da ideia</span>
+          <span>Data de criação</span>
           <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
             <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
             <span class="tooltip-content">Data em que foi preenchida a ideia.</span>
           </span>
         </label>
-        <input type="text" [value]="registrationDate()" readonly
-          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none" />
+        <input
+          type="text"
+          [value]="registrationDate()"
+          readonly
+          class="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none"
+        />
       </div>
 
       <div class="space-y-2 text-sm text-slate-300 md:col-span-2">
@@ -69,18 +91,26 @@
           <span>O que pode ser melhorado</span>
           <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
             <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
-            <span class="tooltip-content">Descricao textual do que pode ser melhorado na empresa.</span>
+            <span class="tooltip-content"
+              >Descricao textual do que pode ser melhorado na empresa.</span
+            >
           </span>
         </label>
-        <input type="text" formControlName="improvementSuggestion" [ngClass]="{
+        <input
+          type="text"
+          formControlName="improvementSuggestion"
+          [ngClass]="{
             'border-white/10': !showControlError('improvementSuggestion'),
             'border-rose-400/50': showControlError('improvementSuggestion'),
           }"
-          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50" />
+          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        />
         @if (showControlError('improvementSuggestion')) {
-        <div class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100">
-          {{ controlErrorMessage('improvementSuggestion') }}
-        </div>
+          <div
+            class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100"
+          >
+            {{ controlErrorMessage('improvementSuggestion') }}
+          </div>
         }
       </div>
 
@@ -89,19 +119,26 @@
           <span>Como e feito hoje</span>
           <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
             <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
-            <span class="tooltip-content">Descricao textual de como o processo a ser melhorado esta sendo feito
-              hoje.</span>
+            <span class="tooltip-content"
+              >Descricao textual de como o processo a ser melhorado esta sendo feito hoje.</span
+            >
           </span>
         </label>
-        <textarea rows="4" formControlName="currentProcess" [ngClass]="{
+        <textarea
+          rows="4"
+          formControlName="currentProcess"
+          [ngClass]="{
             'border-white/10': !showControlError('currentProcess'),
             'border-rose-400/50': showControlError('currentProcess'),
           }"
-          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"></textarea>
+          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        ></textarea>
         @if (showControlError('currentProcess')) {
-        <div class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100">
-          {{ controlErrorMessage('currentProcess') }}
-        </div>
+          <div
+            class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100"
+          >
+            {{ controlErrorMessage('currentProcess') }}
+          </div>
         }
       </div>
 
@@ -110,18 +147,26 @@
           <span>Como pode ser melhorado</span>
           <span class="tooltip-trigger" tabindex="0" aria-label="Descricao do campo">
             <fa-icon [icon]="faCircleInfo" class="cursor-help text-slate-400"></fa-icon>
-            <span class="tooltip-content">Descricao textual de como a melhoria deve ser implementada.</span>
+            <span class="tooltip-content"
+              >Descricao textual de como a melhoria deve ser implementada.</span
+            >
           </span>
         </label>
-        <textarea rows="4" formControlName="howToImplement" [ngClass]="{
+        <textarea
+          rows="4"
+          formControlName="howToImplement"
+          [ngClass]="{
             'border-white/10': !showControlError('howToImplement'),
             'border-rose-400/50': showControlError('howToImplement'),
           }"
-          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"></textarea>
+          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        ></textarea>
         @if (showControlError('howToImplement')) {
-        <div class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100">
-          {{ controlErrorMessage('howToImplement') }}
-        </div>
+          <div
+            class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100"
+          >
+            {{ controlErrorMessage('howToImplement') }}
+          </div>
         }
       </div>
 
@@ -133,47 +178,62 @@
             <span class="tooltip-content">Beneficio esperado pela melhoria proposta.</span>
           </span>
         </label>
-        <textarea rows="4" formControlName="expectedBenefits" [ngClass]="{
+        <textarea
+          rows="4"
+          formControlName="expectedBenefits"
+          [ngClass]="{
             'border-white/10': !showControlError('expectedBenefits'),
             'border-rose-400/50': showControlError('expectedBenefits'),
           }"
-          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"></textarea>
+          class="w-full rounded-2xl border bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50"
+        ></textarea>
         @if (showControlError('expectedBenefits')) {
-        <div class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100">
-          {{ controlErrorMessage('expectedBenefits') }}
-        </div>
+          <div
+            class="rounded-2xl border border-rose-400/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-100"
+          >
+            {{ controlErrorMessage('expectedBenefits') }}
+          </div>
         }
       </div>
     </div>
 
-    <div class="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      class="flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between"
+    >
       <div class="w-full flex flex-wrap gap-3">
         @if (isEditMode()) {
-        <button type="button"
-          class="flex items-center gap-2 rounded-full border border-rose-400/50 bg-rose-950/40 px-4 py-2 text-sm font-medium text-rose-200 transition hover:border-rose-400/80 hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
-          [disabled]="loading()" (click)="handleDelete()">
-          @if (loading()) {
-          <fa-icon [icon]="faSpinner" [animation]="'spin-pulse'" class="ml-2"></fa-icon>
-          } @else {
-          Deletar
-          <fa-icon [icon]="faTrash" class="ml-2"></fa-icon>
-          }
-        </button>
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-full border border-rose-400/50 bg-rose-950/40 px-4 py-2 text-sm font-medium text-rose-200 transition hover:border-rose-400/80 hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="loading()"
+            (click)="handleDelete()"
+          >
+            @if (loading()) {
+              <fa-icon [icon]="faSpinner" [animation]="'spin-pulse'" class="ml-2"></fa-icon>
+            } @else {
+              Deletar
+              <fa-icon [icon]="faTrash" class="ml-2"></fa-icon>
+            }
+          </button>
         }
 
-        <a routerLink="/"
-          class="ml-auto rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200">
+        <a
+          routerLink="/"
+          class="ml-auto rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200"
+        >
           Cancelar
         </a>
 
-        <button type="submit"
+        <button
+          type="submit"
           class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
-          [disabled]="form.invalid || loading()">
+          [disabled]="form.invalid || loading()"
+        >
           @if (loading()) {
-          <fa-icon [icon]="faSpinner" [animation]="'spin-pulse'" class="ml-2"></fa-icon>
+            <fa-icon [icon]="faSpinner" [animation]="'spin-pulse'" class="ml-2"></fa-icon>
           } @else {
-          {{ submitLabel() }}
-          <fa-icon [icon]="faSave" class="ml-2"></fa-icon>
+            {{ submitLabel() }}
+            <fa-icon [icon]="faSave" class="ml-2"></fa-icon>
           }
         </button>
       </div>
@@ -181,7 +241,10 @@
   </form>
 
   @if (showDeleteModal()) {
-  <app-confirm-modal message="Tem certeza que deseja excluir esta ideia? Esta ação não pode ser desfeita."
-    (confirmed)="confirmDelete()" (cancelled)="showDeleteModal.set(false)" />
+    <app-confirm-modal
+      message="Tem certeza que deseja excluir esta ideia? Esta ação não pode ser desfeita."
+      (confirmed)="confirmDelete()"
+      (cancelled)="showDeleteModal.set(false)"
+    />
   }
 </main>
