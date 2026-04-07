@@ -48,6 +48,20 @@ describe('Idea DTOs validação com Zod', () => {
       expect(result.success).toBe(false);
     });
 
+    it('should reject authorRegister greater than 99999', () => {
+      const payload = {
+        authorRegister: 100000,
+        improvementSuggestion: 'Improve process',
+        currentProcess: 'Manual steps',
+        howToImplement: 'Automation',
+        expectedBenefits: 'Faster delivery',
+      };
+
+      const result = createIdeaDtoSchema.safeParse(payload);
+
+      expect(result.success).toBe(false);
+    });
+
     it('should trim and validate improvementSuggestion', () => {
       const payload = {
         authorRegister: 123,

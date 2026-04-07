@@ -1,18 +1,26 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
 import { Idea } from '@models/idea.model';
 import { IdeasService } from '@services/ideas.service';
+
+type IdeaFormControlName =
+  | 'authorRegister'
+  | 'improvementSuggestion'
+  | 'currentProcess'
+  | 'howToImplement'
+  | 'expectedBenefits';
 
 @Component({
   selector: 'app-idea-form',
   templateUrl: './idea-form.component.html',
   styleUrl: './idea-form.component.css',
-  imports: [ReactiveFormsModule, RouterLink, FaIconComponent],
+  imports: [NgClass, ReactiveFormsModule, RouterLink, FaIconComponent],
 })
 export class IdeaFormComponent {
   private readonly formBuilder = inject(FormBuilder);
@@ -51,9 +59,11 @@ export class IdeaFormComponent {
   });
 
   protected readonly faCircleInfo = faCircleInfo;
+  protected readonly faTrash = faTrash;
+  protected readonly faSave = faSave;
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    authorRegister: [0, [Validators.required, Validators.min(1)]],
+    authorRegister: ['', [Validators.required, Validators.pattern(/^[1-9]\d{0,4}$/)]],
     improvementSuggestion: ['', [Validators.required, Validators.minLength(10)]],
     currentProcess: ['', [Validators.required, Validators.minLength(10)]],
     howToImplement: ['', [Validators.required, Validators.minLength(10)]],
@@ -78,32 +88,108 @@ export class IdeaFormComponent {
       const idea = this.selectedIdea();
 
       this.form.reset({
-        authorRegister: idea?.authorRegister ?? 0,
+        authorRegister: idea?.authorRegister?.toString() ?? '',
         improvementSuggestion: idea?.improvementSuggestion ?? '',
         currentProcess: idea?.currentProcess ?? '',
         howToImplement: idea?.howToImplement ?? '',
         expectedBenefits: idea?.expectedBenefits ?? '',
       });
     });
+
+    this.form.get('authorRegister')?.valueChanges.subscribe((value) => {
+      if (typeof value === 'string') {
+        const digitsOnly = value.replace(/\D/g, '').slice(0, 5);
+        if (value !== digitsOnly) {
+          this.form.controls.authorRegister.setValue(digitsOnly, { emitEvent: false });
+        }
+      }
+
+      const authorRegister = Number(value);
+      if (!Number.isInteger(authorRegister) || authorRegister <= 0 || authorRegister > 99999) {
+        this.form.controls.authorRegister.setErrors({ pattern: true });
+        return;
+      }
+    });
   }
 
   protected async handleSubmit(): Promise<void> {
-    this.form.markAllAsTouched();
+    for (const controlName in this.form.controls) {
+      this.form.get(controlName)?.markAsTouched();
+    }
 
     if (this.form.invalid) {
+      this.form.markAsTouched();
       return;
     }
 
     const payload = this.form.getRawValue();
+    const authorRegister = Number(payload.authorRegister);
+
     const id = this.ideaId();
 
     const result =
       id === null
-        ? await this.ideasService.createIdea(payload)
-        : await this.ideasService.updateIdea(id, payload);
+        ? await this.ideasService.createIdea({
+            ...payload,
+            authorRegister,
+          })
+        : await this.ideasService.updateIdea(id, {
+            ...payload,
+            authorRegister,
+          });
 
     if (result !== null) {
       await this.router.navigate(['/']);
     }
+  }
+
+  protected handleAuthorRegisterInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const digitsOnly = input.value.replace(/\D/g, '').slice(0, 5);
+
+    if (input.value !== digitsOnly) {
+      input.value = digitsOnly;
+    }
+
+    this.form.controls.authorRegister.setValue(digitsOnly, { emitEvent: false });
+  }
+
+  protected showInvalidFormWarning(): boolean {
+    return this.form.invalid && this.form.touched;
+  }
+
+  protected showControlError(controlName: IdeaFormControlName): boolean {
+    const control = this.form.controls[controlName];
+    return control.touched && control.invalid;
+  }
+
+  protected controlErrorMessage(controlName: IdeaFormControlName): string {
+    const control = this.form.controls[controlName];
+
+    if (control.hasError('required')) {
+      return 'Este campo e obrigatorio.';
+    }
+
+    if (controlName === 'authorRegister' && control.hasError('pattern')) {
+      return 'Informe apenas numeros, entre 1 e 99999.';
+    }
+
+    if (control.hasError('minlength')) {
+      return 'Informe no minimo 10 caracteres.';
+    }
+
+    return 'Valor invalido.';
+  }
+
+  handleDelete(): void {
+    const id = this.ideaId();
+
+    if (id === null) {
+      return;
+    }
+
+    void this.ideasService.deleteIdea(id).then(() => {
+      this.router.navigate(['/']);
+    });
   }
 }

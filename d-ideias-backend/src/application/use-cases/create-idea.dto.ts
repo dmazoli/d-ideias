@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createIdeaDtoSchema = z.object({
-  authorRegister: z.number().int().positive(),
+  authorRegister: z.number().int().positive().max(99999),
   improvementSuggestion: z.string().trim().min(1),
   currentProcess: z.string().trim().min(1),
   howToImplement: z.string().trim().min(1),

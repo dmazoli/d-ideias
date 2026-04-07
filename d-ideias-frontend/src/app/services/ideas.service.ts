@@ -104,6 +104,24 @@ export class IdeasService {
     }
   }
 
+  public async deleteIdea(id: number): Promise<boolean> {
+    this.statusState.set('loading');
+    this.errorState.set(null);
+
+    try {
+      await firstValueFrom(this.http.delete(`${this.endpoint}/${id}`));
+      this.ideasState.update((ideas: Idea[]) => {
+        return ideas.filter((idea: Idea) => idea.id !== id);
+      });
+      this.statusState.set('success');
+      return true;
+    } catch {
+      this.statusState.set('error');
+      this.errorState.set('Nao foi possivel deletar a ideia.');
+      return false;
+    }
+  }
+
   private toIdea(idea: Idea): Idea {
     return new Idea(
       idea.id,
