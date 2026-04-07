@@ -14,6 +14,9 @@ services:
       POSTGRES_DB: d_ideias
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+    env_file:
+      - .env
     networks:
       - d-ideias-network
     volumes:
@@ -24,13 +27,17 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
+    ports:
+      - "5432:5432"
 
   api:
     build:
       context: ./d-ideias-backend
       dockerfile: Dockerfile
     container_name: d-ideias-api
-    command: npm run start:dev
+    command: sh -c "npm run migration:run && npm run start:dev"
+    env_file:
+      - .env
     depends_on:
       db:
         condition: service_healthy
@@ -40,7 +47,7 @@ services:
       - "3000:3000"
     volumes:
       - ./d-ideias-backend:/app
-      - /app/node_modules
+      - ./d-ideias-backend/node_modules:/app/node_modules
 
   frontend:
     build:
@@ -57,4 +64,4 @@ services:
       - "4200:4200"
     volumes:
       - ./d-ideias-frontend:/app
-      - /app/node_modules
+      - ./d-ideias-frontend/node_modules:/app/node_modules
