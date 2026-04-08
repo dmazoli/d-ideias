@@ -20,7 +20,7 @@ interface SortOption {
 export class SortDropdownComponent implements OnDestroy {
   private readonly document = inject(DOCUMENT);
 
-  currentSort = input<SortBy>('recent');
+  currentSort = input<SortBy>('date');
   sortChanged = output<SortBy>();
 
   faSortAmountDown = faSortAmountDown;
@@ -29,12 +29,11 @@ export class SortDropdownComponent implements OnDestroy {
   isOpen = false;
 
   sortOptions: SortOption[] = [
-    { value: 'recent', label: 'Mais recentes' },
-    { value: 'id', label: 'Por ID' },
     { value: 'date', label: 'Por data de criação' },
     { value: 'updated', label: 'Por data de atualização' },
     { value: 'votes', label: 'Por votos' },
     { value: 'dislike', label: 'Por dislikes' },
+    { value: 'id', label: 'Por ID' },
   ];
 
   toggleDropdown(): void {

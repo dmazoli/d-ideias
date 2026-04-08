@@ -100,6 +100,11 @@ export class IdeaFormComponent {
         howToImplement: idea?.howToImplement ?? '',
         expectedBenefits: idea?.expectedBenefits ?? '',
       });
+
+      Boolean(idea?.id)
+        ? this.form.controls.authorRegister.disable({ emitEvent: false })
+        : this.form.controls.authorRegister.enable({ emitEvent: false });
+
     });
 
     this.form.get('authorRegister')?.valueChanges.subscribe((value) => {
@@ -136,13 +141,13 @@ export class IdeaFormComponent {
     const result =
       id === null
         ? await this.ideasService.createIdea({
-            ...payload,
-            authorRegister,
-          })
+          ...payload,
+          authorRegister,
+        })
         : await this.ideasService.updateIdea(id, {
-            ...payload,
-            authorRegister,
-          });
+          ...payload,
+          authorRegister,
+        });
 
     if (result !== null) {
       await this.router.navigate(['/']);

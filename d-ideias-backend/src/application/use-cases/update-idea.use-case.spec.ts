@@ -96,6 +96,17 @@ describe('UpdateIdeaUseCase', () => {
       expect(repositoryMock.update).not.toHaveBeenCalled();
     });
 
+    it('should throw BadRequestException when trying to update authorRegister', async () => {
+      const input = {
+        authorRegister: 999,
+      };
+
+      await expect(useCase.execute(1, input)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(repositoryMock.update).not.toHaveBeenCalled();
+    });
+
     it('should allow updating multiple fields', async () => {
       const input = {
         improvementSuggestion: 'Updated',

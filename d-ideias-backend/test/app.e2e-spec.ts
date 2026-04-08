@@ -194,6 +194,93 @@ describe('Ideas API (integration)', () => {
     expect(ideaRepositoryMock.update).not.toHaveBeenCalled();
   });
 
+  it('PATCH /ideas/:id should return 400 when trying to update authorRegister', async () => {
+    await request(app.getHttpServer())
+      .patch('/ideas/1')
+      .send({ authorRegister: 999 })
+      .expect(400);
+
+    expect(ideaRepositoryMock.update).not.toHaveBeenCalled();
+  });
+
+  it('PATCH /ideas/:id/upvote should increment upvotes', async () => {
+    const votedIdea: Idea = {
+      id: 1,
+      authorRegister: 123,
+      improvementSuggestion: 'Improve onboarding',
+      currentProcess: 'Manual onboarding steps',
+      howToImplement: 'Automate with forms',
+      expectedBenefits: 'Faster setup',
+      upvotes: 2,
+      downvotes: 0,
+      createdAt: new Date('2026-04-07T00:00:00.000Z'),
+      updatedAt: new Date('2026-04-07T00:00:01.000Z'),
+    };
+
+    ideaRepositoryMock.incrementUpvotes.mockResolvedValue(votedIdea);
+
+    await request(app.getHttpServer())
+      .patch('/ideas/1/upvote')
+      .send({})
+      .expect(200)
+      .expect(({ body }: { body: Idea }): void => {
+        expect(body.id).toBe(1);
+        expect(body.upvotes).toBe(2);
+      });
+
+    expect(ideaRepositoryMock.incrementUpvotes).toHaveBeenCalledWith(1);
+  });
+
+  it('PATCH /ideas/:id/upvote should return 404 when not found', async () => {
+    ideaRepositoryMock.incrementUpvotes.mockResolvedValue(null);
+
+    await request(app.getHttpServer())
+      .patch('/ideas/999/upvote')
+      .send({})
+      .expect(404);
+
+    expect(ideaRepositoryMock.incrementUpvotes).toHaveBeenCalledWith(999);
+  });
+
+  it('PATCH /ideas/:id/downvote should increment downvotes', async () => {
+    const votedIdea: Idea = {
+      id: 1,
+      authorRegister: 123,
+      improvementSuggestion: 'Improve onboarding',
+      currentProcess: 'Manual onboarding steps',
+      howToImplement: 'Automate with forms',
+      expectedBenefits: 'Faster setup',
+      upvotes: 1,
+      downvotes: 3,
+      createdAt: new Date('2026-04-07T00:00:00.000Z'),
+      updatedAt: new Date('2026-04-07T00:00:01.000Z'),
+    };
+
+    ideaRepositoryMock.incrementDownvotes.mockResolvedValue(votedIdea);
+
+    await request(app.getHttpServer())
+      .patch('/ideas/1/downvote')
+      .send({})
+      .expect(200)
+      .expect(({ body }: { body: Idea }): void => {
+        expect(body.id).toBe(1);
+        expect(body.downvotes).toBe(3);
+      });
+
+    expect(ideaRepositoryMock.incrementDownvotes).toHaveBeenCalledWith(1);
+  });
+
+  it('PATCH /ideas/:id/downvote should return 404 when not found', async () => {
+    ideaRepositoryMock.incrementDownvotes.mockResolvedValue(null);
+
+    await request(app.getHttpServer())
+      .patch('/ideas/999/downvote')
+      .send({})
+      .expect(404);
+
+    expect(ideaRepositoryMock.incrementDownvotes).toHaveBeenCalledWith(999);
+  });
+
   it('DELETE /ideas/:id should return 204 when deleted', async () => {
     ideaRepositoryMock.deleteById.mockResolvedValue(true);
 

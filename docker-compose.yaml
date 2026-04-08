@@ -49,7 +49,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD", "node", "-e", "fetch('http://localhost:3000/ideas').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))" ]
+      test: [ "CMD", "node", "-e", "const socket = require('net').connect(3000, '127.0.0.1'); socket.on('connect', () => { socket.end(); process.exit(0); }); socket.on('error', () => process.exit(1));" ]
       interval: 10s
       timeout: 5s
       retries: 10

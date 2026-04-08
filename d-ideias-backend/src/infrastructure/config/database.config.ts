@@ -18,6 +18,6 @@ export function getDatabaseConfig(env: Env): TypeOrmModuleOptions {
     entities: [Idea],
     migrations: migrationsPattern ? [migrationsPattern] : [],
     synchronize: false,
-    logging: env.NODE_ENV === 'development',
+    logging: env.TYPEORM_LOGGING,
   };
 }

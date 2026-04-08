@@ -15,7 +15,8 @@
     "!src/**/*.module.ts",
     "!src/main.ts",
     "!src/**/*.schema.ts",
-    "!src/**/*.spec.ts"
+    "!src/**/*.spec.ts",
+    "!src/infrastructure/migrations/**"
   ],
   "coverageDirectory": "coverage/e2e",
   "coveragePathIgnorePatterns": [

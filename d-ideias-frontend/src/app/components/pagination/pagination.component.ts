@@ -1,4 +1,4 @@
-import { Component, input, output, computed, type Signal } from '@angular/core';
+import { Component, input, output, computed, type Signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -35,6 +35,13 @@ export class PaginationComponent {
   isNextDisabled: Signal<boolean> = computed<boolean>(() => {
     return this.meta().page >= this.totalPages();
   });
+
+  constructor() {
+    effect(() => {
+      this.meta();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
   onPreviousPage(): void {
     const currentPage = this.meta().page;

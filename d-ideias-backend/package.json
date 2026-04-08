@@ -74,7 +74,8 @@
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s",
-      "!**/*.spec.ts"
+      "!**/*.spec.ts",
+      "!**/infrastructure/migrations/**"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

@@ -4,6 +4,10 @@ export const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),
+  TYPEORM_LOGGING: z
+    .enum(['true', 'false'])
+    .transform((value: string): boolean => value === 'true')
+    .default(false),
   API_PORT: z.string().regex(/^\d+$/).transform(Number).default(3000),
   POSTGRES_HOST: z.string().default('localhost'),
   POSTGRES_PORT: z.string().regex(/^\d+$/).transform(Number).default(5432),
